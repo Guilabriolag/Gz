@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Universo Zero — Estúdio de Profissões: Ajudante de Pizzaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/game.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="gameCanvas" class="game-canvas"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="hud-left">
+        <div class="hud-card">
+          <div class="hud-identity">
+            <span class="hud-name">Tic-Tac</span>
+            <span class="hud-money" id="hudMoney">R$ 85</span>
+            <span class="hud-day" id="hudDay">Dia 1</span>
+          </div>
+          <div class="hud-conds">
+            <span>Cansaço: <b id="hudFatigue" class="ok">8%</b></span>
+            <span>Satisfação: <b id="hudSat" class="ok">100%</b></span>
+          </div>
+          <button id="btnTablet" class="btn-tablet">📱 Tic-Pad [Tab]</button>
+        </div>
+        <div id="guidance" class="guidance"><span class="spin">🧭</span><span id="guidanceText">Fale com a Atendente Bia</span></div>
+        <div id="eventBanner" class="event-banner hidden"><span id="eventText"></span></div>
+      </div>
+      <div class="hud-right">
+        <div id="shiftCard" class="hud-card hidden">
+          <span class="clock">⏱️ <b id="hudTimer">2:45</b></span>
+          <span class="sep"></span>
+          <span class="pts" id="hudScore">0 pts</span>
+          <span id="hudCombo" class="combo hidden">🔥 2x</span>
+        </div>
+        <div class="hud-btns">
+          <button id="btnSound" class="icon-btn" title="Som">🔊</button>
+          <button id="btnPause" class="icon-btn" title="Pausar [P]">⏸️</button>
+        </div>
+      </div>
+    </div>
+    <div id="ordersPanel" class="orders-panel"></div>
+    <div class="hud-bottom">
+      <div id="joystick" class="joystick"><div id="joyKnob" class="joy-knob"></div></div>
+      <div class="hud-actions">
+        <button id="btnDash" class="btn-dash">⚡ Impulso</button>
+        <button id="btnInteract" class="btn-interact" disabled>✋ Aproxime-se p/ Interagir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA INICIAL -->
+  <div id="startScreen" class="overlay">
+    <div class="panel start-panel">
+      <div class="start-head">
+        <div>
+          <div class="badge">✨ Universo Zero • Estúdio de Profissões — Módulo Oficial v1.0</div>
+          <h1>Ajudante de <span>Pizzaria</span></h1>
+          <p>Viva a trajetória contínua do <b>Tic-Tac</b>: candidate-se na Pizzaria Forno Zero, bata o ponto, vista o uniforme, prepare ingredientes, apoie o pizzaiolo, agrupe rotas e evolua até abrir seu próprio negócio!</p>
+        </div>
+        <div class="profile-card">
+          <div class="pc-top"><span class="dot">● Perfil Persistente</span><span id="pcDay">Dia 1</span></div>
+          <div class="pc-mid"><b>Tic-Tac</b><span id="pcMoney">R$ 85</span></div>
+          <div class="pc-tags"><span id="pcLevel">Nível Total: 6</span><span id="pcStatus">Em busca de vaga</span></div>
+        </div>
+      </div>
+      <div class="start-grid">
+        <div class="start-left">
+          <div class="mode-btns">
+            <button id="btnOpenWorld" class="mode-btn orange">
+              <div class="mb-top"><span class="mb-icon">🧭</span><span class="mb-tag">RECOMENDADO</span></div>
+              <div class="mb-title">Mundo Aberto Completo</div>
+              <p>Circule pelo Bairro Central, fale com a Atendente Bia, candidate-se à vaga, compre itens e gerencie a vida do Tic-Tac.</p>
+            </button>
+            <button id="btnQuickShift" class="mode-btn green">
+              <div class="mb-top"><span class="mb-icon">⚡</span><span class="mb-tag">AÇÃO EM 3s</span></div>
+              <div class="mb-title">Turno Direto Imediato</div>
+              <p>Já contratado diante do relógio de ponto! Bata entrada, vista o uniforme e caia direto na operação frenética.</p>
+            </button>
+          </div>
+          <div class="controls-card">
+            <div class="cc-title">🎮 Controles Responsivos (Teclado, Mouse & Mobile Touch)</div>
+            <div class="cc-grid">
+              <div><b>WASD / Setas</b><span>ou Joystick / Toque</span></div>
+              <div><b class="amber">[E] ou Espaço</b><span>Interagir / Operar</span></div>
+              <div><b class="sky">[Shift] Impulso</b><span>Corrida rápida</span></div>
+              <div><b class="green">[Tab] / [Q]</b><span>Tic-Pad / Guardar item</span></div>
+            </div>
+            <div class="cc-foot"><span>🍕 11 ambientes reais • 6 atributos • Rotas agrupadas • Negócio próprio</span><button id="btnResetCareer" class="link-btn">↺ Nova Carreira</button></div>
+          </div>
+        </div>
+        <div class="scores-card">
+          <div class="sc-head"><span>🏆 Melhores Expedientes</span><small>Ranking Local</small></div>
+          <div id="scoresList" class="scores-list"></div>
+          <div class="tip">🔥 <span><b>Dica de Ouro:</b> Agrupe <b>2+ pedidos do mesmo bairro</b> na Expedição para multiplicar gorjetas e pontos!</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAUSA -->
+  <div id="pauseScreen" class="overlay hidden">
+    <div class="panel pause-panel">
+      <h2>Jogo Pausado</h2>
+      <p>Universo Zero • Estúdio de Profissões — Ajudante de Pizzaria</p>
+      <button id="btnResume" class="btn-primary">▶ Continuar Jogando</button>
+      <button id="btnRestartShift" class="btn-secondary">↺ Reiniciar Expediente Atual</button>
+      <button id="btnToStart" class="btn-ghost">Voltar à Tela Inicial</button>
+    </div>
+  </div>
+
+  <!-- TIC-PAD -->
+  <div id="tablet" class="overlay hidden">
+    <div class="panel tablet-panel">
+      <div class="modal-head">
+        <div class="mh-left"><span class="mh-icon">👤</span><div><h2>Tic-Pad Zero • Perfil Persistente</h2><p id="tabletSub">Tic-Tac • Dia 1</p></div></div>
+        <button class="icon-btn" data-close="tablet">✕</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="attrs">Atributos & Condições</button>
+        <button class="tab" data-tab="clothes">Roupas & Inventário</button>
+        <button class="tab" data-tab="career">Histórico Profissional</button>
+        <button class="tab" data-tab="arch">Módulo Universo Zero</button>
+      </div>
+      <div id="tabletBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- DIÁLOGOS -->
+  <div id="dialog" class="overlay hidden">
+    <div class="panel dialog-panel">
+      <div class="modal-head">
+        <div class="mh-left"><span class="mh-icon" id="dialogIcon">🍕</span><div><h2 id="dialogTitle">Atendente Bia</h2><p id="dialogSub"></p></div></div>
+        <button class="icon-btn" data-close="dialog">✕</button>
+      </div>
+      <div id="dialogBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- RESUMO / GAME OVER -->
+  <div id="summary" class="overlay hidden">
+    <div class="panel summary-panel">
+      <div id="summaryHead" class="summary-head"></div>
+      <div id="summaryBody" class="modal-body"></div>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/game.js"></script>
+</body>
+</html>
